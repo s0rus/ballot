@@ -40,8 +40,15 @@ const theme: Theme = {
   light: '#d3d3d3',
 };
 
+const TitleWrapper = styled.div`
+  text-align: center;
+  margin-bottom: 6em;
+  font-size: 0.6em;
+  text-decoration: none;
+`;
+
 const MainTitle = styled.h1`
-  font-size: 4.8em;
+  font-size: 6em;
 `;
 
 const MainSubtitle = styled.p`
@@ -54,8 +61,10 @@ const App: React.FC = () => {
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <Main>
-          <MainTitle>ballot</MainTitle>
-          <MainSubtitle>Fast and easy polls</MainSubtitle>
+          <TitleWrapper as='a' href='/'>
+            <MainTitle>ballot</MainTitle>
+            <MainSubtitle>Fast and easy polls</MainSubtitle>
+          </TitleWrapper>
           <Switch>
             <Route exact path='/'>
               <PollCreator />

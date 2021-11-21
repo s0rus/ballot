@@ -4,7 +4,6 @@ import {
   PollContainer,
   PollOption,
   PollOptions,
-  PollRow,
   PollRows,
   ShareContainer,
   ShareInput,
@@ -24,7 +23,7 @@ import { PollID, PollProps, PollState } from '../../interfaces';
 import { formatDistance } from 'date-fns';
 
 const PollVoter: React.FC = () => {
-  const PUBLIC_URL = 'http://localhost:3000';
+  const PUBLIC_URL = 'https://ballot-polls.netlify.app';
   const { pollid } = useParams<PollID>();
   const history = useHistory();
   const [currentPoll, setCurrentPoll] = useState<PollState | null>(null);
@@ -58,8 +57,8 @@ const PollVoter: React.FC = () => {
   }, [getPollData]);
 
   useEffect(() => {
-    document.cookie.match(`r_${pollid}`) ? setVoted(true) : setVoted(false);
-  }, [pollid]);
+    currentPoll?.duplicationCheck && document.cookie.match(`r_${pollid}`) ? setVoted(true) : setVoted(false);
+  }, [pollid, currentPoll?.duplicationCheck]);
 
   const handleClipboard = () => {
     navigator.clipboard.writeText(`${PUBLIC_URL}/${pollid}`).then(() => setIsLinkCopied(true));
@@ -110,34 +109,6 @@ const PollVoter: React.FC = () => {
     incrementVotes();
   };
 
-  const getDuplicationIndicator = () => {
-    if (currentPoll) {
-      switch (currentPoll.duplicationOption) {
-        case 'IP_DUPLICATION_CHECKING':
-          return (
-            <>
-              <Lock />
-              <span>THIS POLL HAS IP DUPLICATION CHECKING ENABLED</span>
-            </>
-          );
-        case 'BROWSER_DUPLICATION_CHECKING':
-          return (
-            <>
-              <Lock />
-              <span>THIS POLL HAS BROWSER DUPLICATION CHECKING ENABLED</span>
-            </>
-          );
-        default:
-          return (
-            <>
-              <LockOpen />
-              <span>THIS POLL HAS NO DUPLICATION CHECKING ENABLED</span>
-            </>
-          );
-      }
-    }
-  };
-
   const determineTime = () => {
     if (currentPoll) {
       const now = Math.floor(Date.now());
@@ -180,7 +151,19 @@ const PollVoter: React.FC = () => {
                   <PollOptions>
                     <VoteButton onClick={handleVote}>VOTE</VoteButton>
                     <VoteLink href={`/${pollid}/r`}>RESULTS</VoteLink>
-                    <PollOption>{getDuplicationIndicator()}</PollOption>
+                    <PollOption>
+                      {currentPoll.duplicationCheck ? (
+                        <>
+                          <Lock />
+                          <span>THIS POLL HAS DUPLICATION CHECKING ENABLED</span>
+                        </>
+                      ) : (
+                        <>
+                          <LockOpen />
+                          <span>THIS POLL HAS NO DUPLICATION CHECKING ENABLED</span>
+                        </>
+                      )}
+                    </PollOption>
                     <PollOption>
                       {currentPoll && currentPoll.multipleChoice ? (
                         <>

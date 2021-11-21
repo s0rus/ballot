@@ -28,7 +28,7 @@ export interface PollProps {
 export interface PollState {
   pollID: string;
   pollTitle: string;
-  duplicationOption: string;
+  duplicationCheck: boolean;
   multipleChoice: boolean;
   pollOptions: PollProps[];
   createdAt: {

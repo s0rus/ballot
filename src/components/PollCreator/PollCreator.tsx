@@ -9,7 +9,6 @@ import {
   PollButton,
 } from '../../utils/PollElements';
 import AutoTextarea from '../AutoTextarea/AutoTextarea';
-import { ReactComponent as Lock } from '../../assets/lock.svg';
 import { PollState } from '../../interfaces';
 import { firestore, timestamp } from '../../firebase/config';
 import { customAlphabet } from 'nanoid';
@@ -18,7 +17,7 @@ import { useHistory } from 'react-router-dom';
 const initialPollState: PollState = {
   pollID: '',
   pollTitle: '',
-  duplicationOption: 'IP DUPLICATION CHECKING',
+  duplicationCheck: false,
   multipleChoice: false,
   pollOptions: [
     {
@@ -48,7 +47,7 @@ const PollCreator: React.FC = () => {
     e.preventDefault();
     const nanoid = customAlphabet('1234567890', 10);
     const pollID = nanoid();
-    const { pollTitle, duplicationOption, multipleChoice, pollOptions } = pollData;
+    const { pollTitle, duplicationCheck, multipleChoice, pollOptions } = pollData;
     const newPollDataOptions = pollOptions.filter((option) => option.optionValue);
 
     if (!pollData.pollTitle) setIsTitleEmpty(true);
@@ -61,7 +60,7 @@ const PollCreator: React.FC = () => {
       .set({
         pollID,
         pollTitle,
-        duplicationOption: duplicationOption.split(' ').join('_'),
+        duplicationCheck,
         multipleChoice,
         pollOptions: newPollDataOptions,
         createdAt: timestamp(),
@@ -69,10 +68,10 @@ const PollCreator: React.FC = () => {
       .then(() => history.push(`/${pollID}`));
   };
 
-  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDuplication = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setPollData({
       ...pollData,
-      duplicationOption: e.target.value,
+      duplicationCheck: !pollData.duplicationCheck,
     });
   };
 
@@ -149,12 +148,8 @@ const PollCreator: React.FC = () => {
         </PollRows>
         <PollOptions>
           <PollOption>
-            <Lock />
-            <select onChange={handleSelect} value={pollData.duplicationOption}>
-              <option>IP DUPLICATION CHECKING</option>
-              <option>BROWSER DUPLICATION CHECKING</option>
-              <option>NO DUPLICATION CHECKING</option>
-            </select>
+            <Checkbox type='checkbox' checked={pollData.duplicationCheck} onChange={handleDuplication} />
+            <span>CHECK FOR DUPLICATION</span>
           </PollOption>
           <PollOption>
             <Checkbox type='checkbox' checked={pollData.multipleChoice} onChange={handleCheckbox} />

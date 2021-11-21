@@ -17,7 +17,7 @@ import { ReactComponent as Copy } from '../../assets/copy.svg';
 import { formatDistance } from 'date-fns';
 
 const PollResults = () => {
-  const PUBLIC_URL = 'http://localhost:3000';
+  const PUBLIC_URL = 'https://ballot-polls.netlify.app';
   const { pollid } = useParams<PollID>();
   const history = useHistory();
   const [currentResults, setCurrentResults] = useState<PollState | null>(null);
